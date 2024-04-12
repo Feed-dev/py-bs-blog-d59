@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, abort
 import requests
 
 # Fetch posts from the API
@@ -11,6 +11,14 @@ app = Flask(__name__)
 def index():
     # Pass the posts to the template
     return render_template('index.html', posts=posts)
+
+
+@app.route('/post/<int:post_id>')
+def post(post_id):
+    post = next((post for post in posts if post["id"] == post_id), None)
+    if post is None:
+        abort(404)
+    return render_template('post.html', post=post)
 
 
 @app.route('/about')
