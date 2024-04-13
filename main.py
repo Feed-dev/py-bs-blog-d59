@@ -1,7 +1,8 @@
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, request, redirect, url_for, abort
+
+# Assuming fetching posts from an API
 import requests
 
-# Fetch posts from the API
 posts = requests.get("https://api.npoint.io/05e3044c5e7900f3b069").json()
 
 app = Flask(__name__)
@@ -9,7 +10,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    # Pass the posts to the template
     return render_template('index.html', posts=posts)
 
 
@@ -26,9 +26,22 @@ def about():
     return render_template('about.html')
 
 
-@app.route('/contact')
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    return render_template('contact.html')
+    if request.method == 'POST':
+        # Extract form data
+        name = request.form.get('name')
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        message = request.form.get('message')
+
+        # Here, implement your logic for what should happen with the data
+        print(f"Received message from {name}, Email: {email}, Phone: {phone}, Message: {message}")
+
+        # Redirect or display a success message
+        return '<h1>Successfully sent your message</h1>'
+    else:
+        return render_template('contact.html')
 
 
 if __name__ == '__main__':
